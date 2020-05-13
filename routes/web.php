@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::redirect('/', '/sk');
+
+Route::group(['prefix' => '{lang}'], function() {
+    Route::get('/', function () {
+        return view('welcome');
+    });
 });
+
