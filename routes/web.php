@@ -17,7 +17,12 @@ Route::redirect('/', '/sk');
 
 Route::group(['prefix' => '{lang}'], function() {
     Route::get('/', function () {
-        return view('welcome');
-    });
+        return view('pages/home');
+    })->name('home');
+
+    Route::get('/test', function () {
+        return view('pages/test');
+    })->name('test');
+
 });
 
