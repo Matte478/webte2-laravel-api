@@ -18,6 +18,8 @@ Route::post('/', function() {
     return response()->json(['test' => 'test'], 200);
 });
 
+Route::get('calculate','CasController@calculate');
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
