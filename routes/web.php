@@ -13,16 +13,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::redirect('/', '/sk');
+//Route::redirect('/', '/sk');
 
-Route::group(['prefix' => '{lang}'], function() {
+//Route::group(['prefix' => '{lang}'], function() {
     Route::get('/', function () {
         return view('pages/home');
     })->name('home');
 
     Route::get('/test', function () {
-        return view('pages/test');
-    })->name('test');
+        return 'test';
+    });
 
-});
+//});
 
