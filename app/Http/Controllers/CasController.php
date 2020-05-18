@@ -12,7 +12,7 @@ class CasController extends Controller
         $validatedData = $request->validate([
             'problem' => 'required|string'
         ]);
-        
+
         $process = new Process(["octave", '-qf', '--eval', 'printf("%f",' . $validatedData['problem'] . ');']);
         $process->run();
 

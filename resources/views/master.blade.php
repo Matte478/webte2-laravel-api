@@ -8,18 +8,13 @@
 
     <title>Webte final</title>
 
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
+    @yield('style')
 </head>
 <body>
 
 <div class="@yield('page-class')" id="app">
-    @include('partials/navbar')
-
     @yield('page')
 </div>
 
-<script type="text/javascript" src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>
