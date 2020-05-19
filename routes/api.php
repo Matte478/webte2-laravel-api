@@ -17,8 +17,10 @@ use Illuminate\Support\Facades\Route;
 Route::post('/', function() {
     return response()->json(['test' => 'test'], 200);
 });
-
+// CasController - class, @calculate - funkcia
 Route::get('calculate','CasController@calculate');
+
+Route::get('airplane', 'AirplaneController@index');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
