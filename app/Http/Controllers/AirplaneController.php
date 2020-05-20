@@ -29,7 +29,7 @@ class AirplaneController extends Controller
             ];
         }
 
-        $process = new Process(["octave", '-qf', '--eval', $this->getScript($validatedData['r'], $lastRow)]);
+        $process = new Process(["octave", '-qf', '-W', '--eval', $this->getScript($validatedData['r'], $lastRow)]);
 
         $process->run();
 
@@ -44,14 +44,21 @@ class AirplaneController extends Controller
         $data = explode("flap =\n\n", $response);
 
         $data[0] = str_replace(' ', '', $data[0]);
-        $data[1] = str_replace(' ', '', $data[1]);
 
+        $secondPart = explode("lastx =\n\n", $data[1]);
+        $secondPart[0] = str_replace(' ', '', $secondPart[0]);
+
+        $secondPart[1] = rtrim($secondPart[1], "\n\n");
+        $secondPart[1] = explode(' ', $secondPart[1]);
+
+        $lastX = array_filter($secondPart[1]);
         $pitchAngle = explode("\n", $data[0]);
-        $backflapAngle = explode("\n", $data[1]);
+        $backflapAngle = explode("\n", $secondPart[0]);
 
         return [
             'pitchAngle' => array_filter($pitchAngle),
-            'backflapAngle' => array_filter($backflapAngle)
+            'backflapAngle' => array_filter($backflapAngle),
+            'lastX' => array_values($lastX)
         ];
     }
 
@@ -75,10 +82,10 @@ class AirplaneController extends Controller
             [y,t,x]=lsim(sys,r*ones(size(t)),t, ['. implode(";", $lastRow) .']);
             
             disp(x(:,3))
-            
+
             flap = r*ones(size(t))*N-x*K\'
+            
+            lastx = x(size(x,1),:)
             ';
     }
-
-
 }
