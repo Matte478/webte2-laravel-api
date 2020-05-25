@@ -4,19 +4,36 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Symfony\Component\Process\Process;
-use Illuminate\Support\Facades\Validator;
 
 class BallbeamController extends Controller
 {
     public function index(Request $request)
     {
-        // TODO: get last row
-        
         $validatedData = $request->validate([
             'r' => 'required|numeric',
+            'lr1' => 'sometimes|numeric',
+            'lr2' => 'sometimes|numeric',
+            'lr3' => 'sometimes|numeric',
+            'lr4' => 'sometimes|numeric',
         ]);
 
-        $process = new Process(["octave", '-qf', '-W', '--eval', $this->getScript($validatedData['r'])]);
+        $lastRow = [0,0,0,0];
+
+        if (
+            isset($validatedData['lr1']) &&
+            isset($validatedData['lr2']) &&
+            isset($validatedData['lr3']) &&
+            isset($validatedData['lr4'])
+        ) {
+            $lastRow = [
+                $validatedData['lr1'],
+                $validatedData['lr2'],
+                $validatedData['lr3'],
+                $validatedData['lr4'],
+            ];
+        }
+
+        $process = new Process(["octave", '-qf', '-W', '--eval', $this->getScript($validatedData['r'], $lastRow)]);
 
         $process->run();
 
@@ -49,7 +66,7 @@ class BallbeamController extends Controller
         ];
     }
 
-    private function getScript($r) {
+    private function getScript($r, $lastRow) {
         return '
             pkg load control;
             m = 0.111;
@@ -68,9 +85,7 @@ class BallbeamController extends Controller
             
             t = 0:0.01:5;
             r = ' . $r . ';
-            initRychlost=0;
-            initZrychlenie=0;
-            [y,t,x]=lsim(N*sys,r*ones(size(t)),t,[initRychlost;0;initZrychlenie;0]);
+            [y,t,x]=lsim(N*sys,r*ones(size(t)),t,['. implode(";", $lastRow) .']);
             
             disp(N*x(:,1))
             
