@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Symfony\Component\Process\Process;
 use Illuminate\Support\Facades\Validator;
+use App\Log;
 
 
 class PendulumController extends Controller
@@ -16,27 +17,24 @@ class PendulumController extends Controller
             'startDegree' => 'sometimes|numeric',
             'startPosition' => 'sometimes|numeric',
         ]);
-//        $lastRow = [0,0];
+
            if (!isset($validatedData['startDegree']))
                $validatedData['startDegree'] = 0;
            if (!isset($validatedData['startPosition']))
                $validatedData['startPosition'] = 0;
-//        if (isset($validatedData['startDegree']) && isset($validatedData['lr2']) {
-//            $lastRow = [
-//                $validatedData['lr1'],
-//                $validatedData['lr2'],
-//                $validatedData['lr3']
-//            ];
-//        }
+
 
         $process = new Process(["octave", '-qf', '-W', '--eval', $this->getScript($validatedData['r'],$validatedData['startDegree'],$validatedData['startPosition'])]);
 
         $process->run();
 
         if (!$process->isSuccessful()) {
-            return response()->json(['error' => $process->getErrorOutput()], 200);
+            $error = $process->getErrorOutput();
+            $this->addLog($validatedData['r'],[$validatedData['startDegree'],$validatedData['startPosition']],false,$error);
+            return response()->json(['error' => $error], 200);
         }
 
+        $this->addLog($validatedData['r'],[$validatedData['startDegree'],$validatedData['startPosition']],true);
         return response()->json(['data' => $this->parse($process->getOutput())], 200);
     }
 
@@ -85,5 +83,18 @@ class PendulumController extends Controller
             'position' => array_filter($position),
             'anglePendulum' => array_filter($anglePendulum),
         ];
+    }
+
+    private function addLog($r, $initValues, $status, $error = null){
+        $data = [
+            'service' => 'pendulum',
+            'init_values' => implode(", ", $initValues),
+            'inputs' => 'r = ' . $r,
+            'status' => $status,
+        ];
+        if ($error)
+            $data['error'] = $error;
+
+        Log::create($data);
     }
 }

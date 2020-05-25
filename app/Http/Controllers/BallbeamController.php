@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Symfony\Component\Process\Process;
+use App\Log;
+
 
 class BallbeamController extends Controller
 {
@@ -38,9 +40,12 @@ class BallbeamController extends Controller
         $process->run();
 
         if (!$process->isSuccessful()) {
+            $error = $process->getErrorOutput();
+            $this->addLog($validatedData['r'],$lastRow,false,$error);
             return response()->json(['error' => $process->getErrorOutput()], 200);
         }
 
+        $this->addLog($validatedData['r'],$lastRow,true);
         return response()->json(['data' => $this->parse($process->getOutput())], 200);
     }
 
@@ -93,5 +98,18 @@ class BallbeamController extends Controller
             
             lastX = x(size(x,1),:)
             ';
+    }
+
+    private function addLog($r, $initValues, $status, $error = null){
+        $data = [
+            'service' => 'ballBeam',
+            'init_values' => implode(", ", $initValues),
+            'inputs' => 'r = ' . $r,
+            'status' => $status,
+        ];
+        if ($error)
+            $data['error'] = $error;
+
+        Log::create($data);
     }
 }

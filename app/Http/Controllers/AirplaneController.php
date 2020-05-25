@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\Process\Process;
-use function Couchbase\defaultDecoder;
+use App\Log;
+
 
 class AirplaneController extends Controller
 {
@@ -34,9 +35,12 @@ class AirplaneController extends Controller
         $process->run();
 
         if (!$process->isSuccessful()) {
-            return response()->json(['error' => $process->getErrorOutput()], 200);
+            $error = $process->getErrorOutput();
+            $this->addLog($validatedData['r'],$lastRow,false,$error);
+            return response()->json(['error' => $error], 200);
         }
-        
+
+        $this->addLog($validatedData['r'],$lastRow,true);
         return response()->json(['data' => $this->parse($process->getOutput())], 200);
     }
 
@@ -87,5 +91,18 @@ class AirplaneController extends Controller
             
             lastx = x(size(x,1),:)
             ';
+    }
+
+    private function addLog($r, $initValues, $status, $error = null){
+        $data = [
+            'service' => 'airplane',
+            'init_values' => implode(", ", $initValues),
+            'inputs' => 'r = ' . $r,
+            'status' => $status,
+        ];
+        if ($error)
+            $data['error'] = $error;
+
+        Log::create($data);
     }
 }
