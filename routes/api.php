@@ -21,6 +21,7 @@ Route::post('/', function() {
 Route::group(['middleware' => 'cors'], function () {
     Route::get('calculate','CasController@calculate');
     Route::get('airplane', 'AirplaneController@index');
+    Route::get('pendulum', 'PendulumController@index');
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
