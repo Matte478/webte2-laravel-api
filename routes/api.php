@@ -23,6 +23,7 @@ Route::group(['middleware' => 'cors'], function () {
     Route::get('airplane', 'AirplaneController@index');
     Route::get('pendulum', 'PendulumController@index');
     Route::get('ballbeam', 'BallbeamController@index');
+    Route::get('suspension', 'SuspensionController@index');
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
