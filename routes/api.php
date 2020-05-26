@@ -23,7 +23,11 @@ Route::group(['middleware' => 'cors'], function () {
     Route::get('airplane', 'AirplaneController@index');
     Route::get('pendulum', 'PendulumController@index');
     Route::get('ballbeam', 'BallbeamController@index');
+
+//    Route::get('logs/export', 'LogsController@export');
 });
+
+Route::get('logs/export', 'LogsController@export');
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
