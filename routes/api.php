@@ -14,21 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/', function() {
-    return response()->json(['test' => 'test'], 200);
-});
-
 Route::group(['middleware' => 'cors'], function () {
     Route::get('calculate','CasController@calculate');
     Route::get('airplane', 'AirplaneController@index');
     Route::get('pendulum', 'PendulumController@index');
     Route::get('ballbeam', 'BallbeamController@index');
-
-//    Route::get('logs/export', 'LogsController@export');
 });
 
-Route::get('logs/export', 'LogsController@export');
-
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::get('logs/export/csv', 'LogsController@exportCSV');
+Route::get('logs/export/pdf', 'LogsController@exportPDF');
