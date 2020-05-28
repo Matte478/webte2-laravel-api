@@ -14,12 +14,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::group(['middleware' => 'cors'], function () {
-    Route::get('calculate','CasController@calculate');
-    Route::get('airplane', 'AirplaneController@index');
-    Route::get('pendulum', 'PendulumController@index');
-    Route::get('ballbeam', 'BallbeamController@index');
-});
+Route::group(['middleware' => 'authorization'], function () {
 
-Route::get('logs/export/csv', 'LogsController@exportCSV');
-Route::get('logs/export/pdf', 'LogsController@exportPDF');
+    Route::group(['middleware' => 'cors'], function () {
+        Route::get('calculate', 'CasController@calculate');
+        Route::get('airplane', 'AirplaneController@index');
+        Route::get('pendulum', 'PendulumController@index');
+        Route::get('ballbeam', 'BallbeamController@index');
+    });
+
+    Route::get('logs/export/csv', 'LogsController@exportCSV');
+    Route::get('logs/export/pdf', 'LogsController@exportPDF');
+
+});
