@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Symfony\Component\Process\Process;
 use App\Log;
+use App\Mail\StatisticsMail;
 
 
 class CasController extends Controller
@@ -31,6 +33,20 @@ class CasController extends Controller
 
     public function statistics()
     {
+        return response()->json(['data' => $this->getStatistics()], 200);
+    }
+
+    public function sendEmail(Request $request)
+    {
+        $validatedData = $request->validate([
+            'email' => 'required|email'
+        ]);
+
+        Mail::to($validatedData['email'])->send(new StatisticsMail($this->getStatistics()));
+        return response()->json(['data' => 'success'], 200);
+    }
+
+    private function getStatistics() {
         $logs = Log::groupBy('service')
             ->select('service', DB::raw('count(*) as count'))
             ->orderBy('count', 'DESC')
@@ -75,7 +91,7 @@ class CasController extends Controller
             }
         }
 
-        return response()->json(['data' => $logs], 200);
+        return $logs;
     }
 
     private function addLog($problem, $status, $error = null, $initValues = null) {
