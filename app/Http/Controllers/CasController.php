@@ -42,8 +42,13 @@ class CasController extends Controller
             'email' => 'required|email'
         ]);
 
-        Mail::to($validatedData['email'])->send(new StatisticsMail($this->getStatistics()));
-        return response()->json(['data' => 'success'], 200);
+        try {
+            Mail::to($validatedData['email'])->send(new StatisticsMail($this->getStatistics()));
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error'], 400);
+        }
+
+        return response()->json(['status' => 'success'], 200);
     }
 
     private function getStatistics() {

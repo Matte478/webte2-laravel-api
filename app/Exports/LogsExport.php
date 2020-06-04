@@ -105,7 +105,7 @@ class LogsExport implements FromCollection, WithHeadings, ShouldAutoSize, WithMa
                         ],
                         'fill' => [
                             'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                            'color' => ['rgb' => '26547c']
+                            'color' => ['rgb' => '004e66']
                         ]
                     ]
                 );
