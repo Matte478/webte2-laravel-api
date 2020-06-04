@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'authorization'], function () {
     Route::group(['middleware' => 'cors'], function () {
-        Route::get('most-used','CasController@mostUsed');
+        Route::get('statistics','CasController@statistics');
         Route::get('calculate', 'CasController@calculate');
         Route::get('airplane', 'AirplaneController@index');
         Route::get('pendulum', 'PendulumController@index');

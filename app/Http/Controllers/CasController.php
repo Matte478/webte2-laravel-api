@@ -29,57 +29,53 @@ class CasController extends Controller
         return response()->json(['data' => $process->getOutput()], 200);
     }
 
-    public function mostUsed()
+    public function statistics()
     {
-        $log = Log::groupBy('service')
+        $logs = Log::groupBy('service')
             ->select('service', DB::raw('count(*) as count'))
             ->orderBy('count', 'DESC')
-            ->first();
+            ->get();
 
-        $service = null;
-        switch (strtolower($log->service)) {
-            case 'custom':
-                $service = [
-                    'en' => 'Calculator',
-                    'sk' => 'Kalkulačka'
-                ];
-                break;
+        foreach ($logs as &$log) {
+            switch (strtolower($log->service)) {
+                case 'custom':
+                    $log->service = [
+                        'en' => 'Calculator',
+                        'sk' => 'Kalkulačka'
+                    ];
+                    break;
 
-            case 'ballbeam':
-                $service = [
-                    'en' => 'Ballbeam',
-                    'sk' => 'Gulička na tyči'
-                ];
-                break;
+                case 'ballbeam':
+                    $log->service = [
+                        'en' => 'Ballbeam',
+                        'sk' => 'Gulička na tyči'
+                    ];
+                    break;
 
-            case 'airplane':
-                $service = [
-                    'en' => 'Aircraft pitch angle',
-                    'sk' => 'Náklon lietadla'
-                ];
-                break;
+                case 'airplane':
+                    $log->service = [
+                        'en' => 'Aircraft pitch angle',
+                        'sk' => 'Náklon lietadla'
+                    ];
+                    break;
 
-            case 'pendulum':
-                $service = [
-                    'en' => 'Inverted pendulum',
-                    'sk' => 'Inverzné kyvadlo'
-                ];
-                break;
+                case 'pendulum':
+                    $log->service = [
+                        'en' => 'Inverted pendulum',
+                        'sk' => 'Inverzné kyvadlo'
+                    ];
+                    break;
 
-            case 'suspension':
-                $service = [
-                    'en' => 'Suspension',
-                    'sk' => 'Tlmič kolesa'
-                ];
-                break;
+                case 'suspension':
+                    $log->service = [
+                        'en' => 'Suspension',
+                        'sk' => 'Tlmič kolesa'
+                    ];
+                    break;
+            }
         }
 
-        $response = [
-            'service' => $service,
-            'count' => $log->count
-        ];
-
-        return response()->json(['data' => $response], 200);
+        return response()->json(['data' => $logs], 200);
     }
 
     private function addLog($problem, $status, $error = null, $initValues = null) {
