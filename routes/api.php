@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['middleware' => 'authorization'], function () {
     Route::group(['middleware' => 'cors'], function () {
-
         Route::get('statistics',            'CasController@statistics');
         Route::get('statistics/send-email', 'CasController@sendEmail');
         Route::get('calculate',             'CasController@calculate');
@@ -28,5 +27,6 @@ Route::group(['middleware' => 'authorization'], function () {
 
     Route::get('logs/export/csv',           'LogsController@exportCSV');
     Route::get('logs/export/pdf',           'LogsController@exportPDF');
+    Route::get('endpoints/export/pdf',      'EndpointsController@exportPDF');
     
 });
