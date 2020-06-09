@@ -42,7 +42,7 @@ class BallbeamController extends Controller
         if (!$process->isSuccessful()) {
             $error = $process->getErrorOutput();
             $this->addLog($validatedData['r'],$lastRow,false,$error);
-            return response()->json(['error' => $process->getErrorOutput()], 200);
+            return response()->json(['error' => $process->getErrorOutput()], 422);
         }
 
         $this->addLog($validatedData['r'],$lastRow,true);

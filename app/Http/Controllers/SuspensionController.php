@@ -45,7 +45,7 @@ class SuspensionController extends Controller
         if (!$process->isSuccessful()) {
             $error = $process->getErrorOutput();
             $this->addLog($validatedData['r'],$lastPosition,false,$error);
-            return response()->json(['error' => $error], 200);
+            return response()->json(['error' => $error], 422);
         }
 
         $this->addLog($validatedData['r'],$lastPosition,true);

@@ -18,13 +18,13 @@ class CasController extends Controller
             'problem' => 'required|string'
         ]);
 
-        $process = new Process(["octave", '-qf', '--eval', 'printf("%f",' . $validatedData['problem'] . ');']);
+        $process = new Process(["octave", '-qf', '-W', '--eval', $validatedData['problem']]);
         $process->run();
 
         if (!$process->isSuccessful()) {
             $error = $process->getErrorOutput();
             $this->addLog($validatedData['problem'],false,$error);
-            return response()->json(['error' => $process->getErrorOutput()], 200);
+            return response()->json(['message' => $process->getErrorOutput()], 422);
         }
 
         $this->addLog($validatedData['problem'],true);
